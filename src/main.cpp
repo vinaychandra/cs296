@@ -120,7 +120,7 @@ int main(int argc, char** argv)
   
   entry = sim;
   test = entry->create_fcn();
-
+/*
   //! This initializes GLUT
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
@@ -147,6 +147,20 @@ int main(int argc, char** argv)
 
   //! Enter the infinite GLUT event loop
   glutMainLoop();
-  
+ */
+ 
+// base_sim_t new_world;
+// b2Timer timer= b2Timer();
+	float32 s = 0.0f;
+ 
+ for (int i = 0; i < 150; i++)
+ {
+	 b2Timer timer;
+	 test->get_world()->Step(1.0f/settings.hz, settings.velocity_iterations, settings.position_iterations);
+	 s += timer.GetMilliseconds();
+ }
+ 
+  printf("The average time for a 150 iterations is: %f ms\n",(float32)s/150.0);
+  //printf("This is from the Box2D simulation for CS296 Lab 04. It has been made by Saicharan from Group 31.\n");
   return 0;
 }

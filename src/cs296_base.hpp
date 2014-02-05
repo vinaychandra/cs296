@@ -122,6 +122,12 @@ namespace cs296
   class base_sim_t : public b2ContactListener
   {
   public:
+  
+	b2World* get_world(void)
+	{
+		return m_world;
+	}
+  
     
     base_sim_t();
 

@@ -90,22 +90,20 @@ setup:
 	@mkdir -p myobjs
 	@mkdir -p mybins
 	@mkdir -p mylibs
-ifneq (,$(BOX2D_INCLUDE_FIND))
+
 ifneq (,$(BOX2D_LIB_FIND))
 	@$(ECHO) "Box2D Found.. No installation required"
 else
-	@$(ECHO) "Box2D not found [lib]"
+	@$(ECHO) "Box2D not found"
 	@tar xvzf $(BOX2D_SRCDIR)/Box2D.tgz -C $(BOX2D_SRCDIR)
 	@mkdir -p $(BOX2D_SRCDIR)/Box2D/build296
 	@cd $(BOX2D_SRCDIR)/Box2D/build296; cmake ../; make; make install;
 	@$(ECHO) "Box2D Build Complete"
-endif
-else
-	@$(ECHO) "Box2D not found [include]"
-	@tar xzf $(BOX2D_SRCDIR)/Box2D.tgz -C $(BOX2D_SRCDIR)
-	@mkdir -p $(BOX2D_SRCDIR)/Box2D/build296
-	@cd $(BOX2D_SRCDIR)/Box2D/build296; cmake ../; make; make install;
-	@$(ECHO) "Box2D Build Complete"
+	
+	@$(ECHO) "Patching Box2D files..."
+	@patch $(BOX2D_SRCDIR)/Box2D/Box2D/Common/b2Timer.cpp < $(BOX2D_SRCDIR)/patch/b2Timer_cpp.patch
+	@patch $(BOX2D_SRCDIR)/Box2D/Box2D/Common/b2Timer.h < $(BOX2D_SRCDIR)/patch/b2Timer_h.patch
+	@$(ECHO) "Patching Done"
 endif
 
 $(OBJS): $(OBJDIR)/%.o : $(SRCDIR)/%.cpp
