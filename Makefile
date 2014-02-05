@@ -83,7 +83,7 @@ MAIN_OBJ  = $(OBJDIR)/main.o
 #####################################
 .PHONY: all setup doc clean distclean
 
-all: setup exelib
+all: setup exe
 
 setup:
 	@$(ECHO) "Setting up compilation..."
@@ -134,13 +134,22 @@ exe : setup $(OBJS)
 
 clean:
 	@$(ECHO) -n "Cleaning up..."
-	@$(RM) -rf $(OBJDIR) $(LIBDIR) *~ $(DEPS) $(SRCDIR)/*~
+	@$(RM) -rf $(OBJDIR) $(LIBDIR) $(DOCDIR)/html *~ $(DEPS) $(SRCDIR)/*~
 	@$(ECHO) "Done"
+	@$(RM) -f $(DOCDIR)/*.aux $(DOCDIR)/*.bbl $(DOCDIR)/*.blg $(DOCDIR)/*.log $(DOCDIR)/*.pdf
 
 distclean: clean
 	@$(RM) -rf $(BINDIR) $(DOCDIR)/html $(LIBDIR)
 	@$(RM) -Rf $(BOX2D_SRCDIR)/Box2D
 	@$(RM) -Rf $(BOX2D_ROOT)/lib $(BOX2D_ROOT)/include
+	@$(RM) -f $(DOCDIR)/*.aux $(DOCDIR)/*.bbl $(DOCDIR)/*.blg $(DOCDIR)/*.log $(DOCDIR)/*.pdf
+
+doc:
+	@$(ECHO) -n "Generating Doxygen Documentation ...  "
+	@$(RM) -rf doc/html
+	@$(DOXYGEN) $(DOCDIR)/Doxyfile 2 > /dev/null
+	@$(ECHO) "Done"
+
 
 usestatic: $(OBJS)
 ifeq (FALSE, $(SHARED_LIB))
@@ -181,3 +190,11 @@ else
 	@$(RM) -f temp.log temp.e
 endif
 	@$(PRINTF) "$(MESG_COLOR)Build complete:$(NO_COLOR) $(FILE_COLOR) %21s$(NO_COLOR)\n" "$(notdir $(TARGET_PATH2))"
+
+report:
+	@cd doc;\
+	pdflatex cs296_report_31;\
+	bibtex cs296_report_31;\
+	pdflatex cs296_report_31;\
+	bibtex cs296_report_31;\
+	pdflatex cs296_report_31;\

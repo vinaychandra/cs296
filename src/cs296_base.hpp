@@ -35,26 +35,28 @@
 namespace cs296
 {
 
-  //! What is the difference between a class and a struct in C++?
+  // What is the difference between a class and a struct in C++?
   class base_sim_t;
   struct settings_t;
   
-  //! Why do we use a typedef
+  // Why do we use a typedef
   typedef base_sim_t* sim_create_fcn(); 
 
-  //! Simulation settings. Some can be controlled in the GUI.
-  struct settings_t
+  /*!setting_t is the structure for assigning values to the default variables of gui in box2d simulation
+   */ 
+   struct settings_t
   {
-    //! Notice the initialization of the class members in the constructor
-    //! How is this happening?
+    // Notice the initialization of the class members in the constructor
+    // How is this happening?
+    
     settings_t() :
-      view_center(0.0f, 20.0f),
+      view_center(0.0f, 20.0f), 
       hz(60.0f),
-      velocity_iterations(8),
+      velocity_iterations(8), 
       position_iterations(3),
       draw_shapes(1),
       draw_joints(1),
-      draw_AABBs(0),
+      draw_AABBs(0), 
       draw_pairs(0),
       draw_contact_points(0),
       draw_contact_normals(0),
@@ -70,29 +72,29 @@ namespace cs296
       single_step(0)
     {}
     
-    b2Vec2 view_center;
-    float32 hz;
-    int32 velocity_iterations;
-    int32 position_iterations;
-    int32 draw_shapes;
-    int32 draw_joints;
-    int32 draw_AABBs;
+    b2Vec2 view_center;//!< vector for viewcenter to set the viewcenter for the gui window appearing on the screen 
+    float32 hz;//!< stores the hz value for the simulation
+    int32 velocity_iterations;//!< stores the velocity_iterations
+    int32 position_iterations;//!< stores the position_iterations
+    int32 draw_shapes;//!< stores boolean for showing shape
+    int32 draw_joints;//!< stores boolean for showing joints
+    int32 draw_AABBs;//!< stores boolean for Axis Aligned Bounding Boxes[AABB]
     int32 draw_pairs;
-    int32 draw_contact_points;
-    int32 draw_contact_normals;
-    int32 draw_contact_forces;
-    int32 draw_friction_forces;
-    int32 draw_COMs;
-    int32 draw_stats;
-    int32 draw_profile;
+    int32 draw_contact_points;//!< stores boolean for drawing contact points
+    int32 draw_contact_normals;//!< stores boolean for drawing normals
+    int32 draw_contact_forces;//!< stores boolean for drawing contact forces
+    int32 draw_friction_forces;//!< stores boolean for drawing contact friction forces
+    int32 draw_COMs;//!< stores boolean for drawing centre of masses
+    int32 draw_stats;//!< stores boolean for showing stats
+    int32 draw_profile;//!< stores boolean for showing profile
     int32 enable_warm_starting;
     int32 enable_continuous;
     int32 enable_sub_stepping;
-    int32 pause;
-    int32 single_step;
+    int32 pause;//!< stores boolean for setting initial-pause value
+    int32 single_step;//!< stores boolean for directly showing or not showing all the steps in one go
   };
-  
-  struct sim_t
+ 
+   struct sim_t
   {
     const char *name;
     sim_create_fcn *create_fcn;
@@ -104,24 +106,27 @@ namespace cs296
   extern sim_t *sim;
   
   
-  const int32 k_max_contact_points = 2048;  
-  struct contact_point_t
+  const int32 k_max_contact_points = 2048;//!< defines the maximum number of point of contacts allowed for the given stimulation    
+  /*! The contact_point_t stores contact point which is a point where two shapes touch.
+   */
+    struct contact_point_t
   {
-    b2Fixture* fixtureA;
-    b2Fixture* fixtureB;
-    b2Vec2 normal;
-    b2Vec2 position;
-    b2PointState state;
+    b2Fixture* fixtureA;//!< fixture of the first body in contact
+    b2Fixture* fixtureB;//!< fixture of the second body in the contact
+    b2Vec2 normal;//!< vector of the normal vector of the fixtures in contact
+    b2Vec2 position;//!< position of the contact point
+    b2PointState state;//!< state of the contact point
   };
-  
+  /*! the structure initialises the variables and states, calls the respective constructor functions to support GUI interface of Box2d \n
+   * creates the world of box2D */
   class base_sim_t : public b2ContactListener
   {
   public:
     
     base_sim_t();
 
-    //! Virtual destructors - amazing objects. Why are these necessary?
-    virtual ~base_sim_t();
+    // Virtual destructors - amazing objects. Why are these necessary?
+    virtual ~base_sim_t();//!< destructor function for base_sim_t()
     
     void set_text_line(int32 line) { m_text_line = line; }
     void draw_title(int x, int y, const char *string);
@@ -137,10 +142,10 @@ namespace cs296
     void mouse_move(const b2Vec2& p) { B2_NOT_USED(p); }
 
     
-    // Let derived tests know that a joint was destroyed.
+    //! Let derived tests know that a joint was destroyed.
     virtual void joint_destroyed(b2Joint* joint) { B2_NOT_USED(joint); }
     
-    // Callbacks for derived classes.
+    //! Callbacks for derived classes.
     virtual void begin_contact(b2Contact* contact) { B2_NOT_USED(contact); }
     virtual void end_contact(b2Contact* contact) { B2_NOT_USED(contact); }
     virtual void pre_solve(b2Contact* contact, const b2Manifold* oldManifold);
@@ -150,10 +155,10 @@ namespace cs296
       B2_NOT_USED(impulse);
     }
 
-  //!How are protected members different from private memebers of a class in C++ ?
+  //How are protected members different from private memebers of a class in C++ ?
   protected:
 
-    //! What are Friend classes?
+    // What are Friend classes?
     friend class contact_listener_t;
     
     b2Body* m_ground_body;
