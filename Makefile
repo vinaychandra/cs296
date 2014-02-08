@@ -32,6 +32,11 @@ BINDIR = $(PROJECT_ROOT)/mybins
 LIBDIR = $(PROJECT_ROOT)/mylibs
 DOCDIR = $(PROJECT_ROOT)/doc
 
+
+SCRIPT_DIR 	= $(PROJECT_ROOT)/scripts
+DATA_DIR 	= $(PROJECT_ROOT)/data
+
+
 # Library Paths
 BOX2D_ROOT=$(EXTERNAL_ROOT)
 GLUI_ROOT=usr
@@ -81,6 +86,8 @@ OBJS2 := $(SRCS2:$(SRCDIR)/%.cpp=$(OBJDIR)/%.o)
 MAIN_OBJ  = $(OBJDIR)/main.o
 
 #####################################
+
+####################################
 .PHONY: all setup doc clean distclean
 
 all: setup exe
@@ -90,6 +97,8 @@ setup:
 	@mkdir -p myobjs
 	@mkdir -p mybins
 	@mkdir -p mylibs
+	@mkdir -p data
+	@mkdir -p scripts
 
 ifneq (,$(BOX2D_LIB_FIND))
 	@$(ECHO) "Box2D Found.. No installation required"
@@ -132,7 +141,7 @@ exe : setup $(OBJS)
 
 clean:
 	@$(ECHO) -n "Cleaning up..."
-	@$(RM) -rf $(OBJDIR) $(LIBDIR) $(DOCDIR)/html *~ $(DEPS) $(SRCDIR)/*~
+	@$(RM) -rf $(OBJDIR) $(DATA_DIR) $(LIBDIR) $(DOCDIR)/html *~ $(DEPS) $(SRCDIR)/*~
 	@$(ECHO) "Done"
 	@$(RM) -f $(DOCDIR)/*.aux $(DOCDIR)/*.bbl $(DOCDIR)/*.blg $(DOCDIR)/*.log $(DOCDIR)/*.pdf
 
