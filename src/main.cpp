@@ -27,7 +27,7 @@
 #include "render.hpp"
 #include "cs296_base.hpp"
 #include "callbacks.hpp"
-
+#include "iostream"
 //! GLUI is the library used for drawing the GUI
 //! Learn more about GLUI by reading the GLUI documentation
 //! Learn to use preprocessor diectives to make your code portable
@@ -40,7 +40,8 @@
 //! These are standard include files
 //! These are usually available at standard system paths like /usr/include
 //! Read about the use of include files in C++
-#include <cstdio>
+#include <sys/time.h>
+
 
 
 //! Notice the use of extern. Why is it used here?
@@ -120,47 +121,78 @@ int main(int argc, char** argv)
   
   entry = sim;
   test = entry->create_fcn();
-/*
-  //! This initializes GLUT
-  glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-  glutInitWindowSize(width, height);
 
-  char title[50];
-  sprintf(title, "CS296 Base Code. Running on Box2D %d.%d.%d", b2_version.major, b2_version.minor, b2_version.revision);
-  main_window = glutCreateWindow(title);
+  //! This initializes GLUT
+//  glutInit(&argc, argv);
+//  glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
+//  glutInitWindowSize(width, height);
+
+//  char title[50];
+//  sprintf(title, "CS296 Base Code. Running on Box2D %d.%d.%d", b2_version.major, b2_version.minor, b2_version.revision);
+//  main_window = glutCreateWindow(title);
 
   //! Here we setup all the callbacks we need
   //! Some are set via GLUI
-  GLUI_Master.set_glutReshapeFunc(callbacks_t::resize_cb);  
-  GLUI_Master.set_glutKeyboardFunc(callbacks_t::keyboard_cb);
-  GLUI_Master.set_glutSpecialFunc(callbacks_t::keyboard_special_cb);
-  GLUI_Master.set_glutMouseFunc(callbacks_t::mouse_cb);
+//  GLUI_Master.set_glutReshapeFunc(callbacks_t::resize_cb);  
+//  GLUI_Master.set_glutKeyboardFunc(callbacks_t::keyboard_cb);
+//  GLUI_Master.set_glutSpecialFunc(callbacks_t::keyboard_special_cb);
+//  GLUI_Master.set_glutMouseFunc(callbacks_t::mouse_cb);
   //! Others are set directly
-  glutDisplayFunc(callbacks_t::display_cb);
-  glutMotionFunc(callbacks_t::mouse_motion_cb);
-  glutKeyboardUpFunc(callbacks_t::keyboard_up_cb); 
-  glutTimerFunc(frame_period, callbacks_t::timer_cb, 0);
+//  glutDisplayFunc(callbacks_t::display_cb);
+//  glutMotionFunc(callbacks_t::mouse_motion_cb);
+//  glutKeyboardUpFunc(callbacks_t::keyboard_up_cb); 
+//  glutTimerFunc(frame_period, callbacks_t::timer_cb, 0);
 
   //! We create the GLUI user interface
-  create_glui_ui();
+//  create_glui_ui();
 
   //! Enter the infinite GLUT event loop
-  glutMainLoop();
- */
- 
-// base_sim_t new_world;
-// b2Timer timer= b2Timer();
-	float32 s = 0.0f;
- 
- for (int i = 0; i < 150; i++)
- {
-	 b2Timer timer;
-	 test->get_world()->Step(1.0f/settings.hz, settings.velocity_iterations, settings.position_iterations);
-	 s += timer.GetMilliseconds();
- }
- 
-  printf("The average time for a 150 iterations is: %f ms\n",(float32)s/150.0);
-  //printf("This is from the Box2D simulation for CS296 Lab 04. It has been made by Saicharan from Group 31.\n");
-  return 0;
+//	std::cout << "how" << std::endl;
+//  for(int i=0;i<5;i++){
+//	  std::cout << 1 << std::endl;
+//	  callbacks_t::display_cb();
+//  }
+//  	glutMainLoop();
+//  }
+  float32 t[4];
+  for(int i=0;i<4;i++){
+	  t[i]=0;
+  }
+  int iter=atoi(argv[1]);
+  struct timeval tv;
+  struct timezone tz;
+  double strtsec,endsec,strtu,endu;
+  
+  gettimeofday(&tv,&tz);
+  strtsec=tv.tv_sec;
+  strtu=tv.tv_usec;
+  
+  for(int i=0;i<iter;i++){
+
+	(*test).step(&settings);
+	//(*((*test).getWorld())).Step(settings.hz > 0.0f ? 1.0f / settings.hz : float32(0.0f), settings.velocity_iterations, settings.position_iterations);	
+	t[0]=t[0]+(*((*test).get_world())).GetProfile().step;// << std::endl;
+	t[1]=t[1]+(*((*test).get_world())).GetProfile().collide;
+	t[2]=t[2]+(*((*test).get_world())).GetProfile().solveVelocity;
+	t[3]=t[3]+(*((*test).get_world())).GetProfile().solvePosition;
+  }
+  gettimeofday(&tv,&tz);
+  endsec=tv.tv_sec;
+  endu=tv.tv_usec;
+  double secdiff,udiff,diff;
+  secdiff = endsec-strtsec;
+  udiff = endu - strtu;
+  diff = (secdiff * 1000) + (udiff / 1000);
+  
+	std::cout.precision(5);
+//	std::cout.fill('5');
+//	std::cout.width(10);
+	std::cout << "Number of Iterations: " << iter << std::endl;
+	std::cout << "Average time per step is " << std::fixed << t[0]/float32(iter) << " ms" << std::endl;
+	std::cout << "Average time for collisions is " << std::fixed << t[1]/float32(iter) << " ms" << std::endl;
+	std::cout << "Average time for velocity updates is " << std::fixed << t[2]/float32(iter) << " ms" << std::endl;
+	std::cout << "Average time for position updates is " << std::fixed << t[3]/float32(iter) << " ms" << std::endl << std::endl;
+	std::cout << "Total loop time is " << diff << "ms" << std::endl;
+	
+ return 0;
 }
