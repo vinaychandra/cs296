@@ -150,13 +150,13 @@ int main(int argc, char** argv)
   udiff = (endu - strtu);
   diff = (secdiff * 1000.0) + (udiff / 1000.0);
   
-//	std::cout.precision(5);
+	std::cout.precision(5);
 	std::cout << "Number of Iterations: " << iter << std::endl;
-	std::cout << "Average time per step is " <<  t[0]/iter << " ms" << std::endl;
-	std::cout << "Average time for collisions is " <<  t[1]/iter << " ms" << std::endl;
-	std::cout << "Average time for velocity updates is " <<  t[2]/iter << " ms" << std::endl;
-	std::cout << "Average time for position updates is " <<  t[3]/iter << " ms" << std::endl << std::endl;
-	std::cout << "Total loop time is " << diff << "ms" << std::endl;
+	std::cout << "Average time per step is " << std::fixed <<  t[0]/iter << " ms" << std::endl;
+	std::cout << "Average time for collisions is " << std::fixed<<  t[1]/iter << " ms" << std::endl;
+	std::cout << "Average time for velocity updates is " << std::fixed<<  t[2]/iter << " ms" << std::endl;
+	std::cout << "Average time for position updates is " << std::fixed<<  t[3]/iter << " ms" << std::endl << std::endl;
+	std::cout << "Total loop time is " << std::fixed<< diff << "ms" << std::endl;
 	
  return 0;
 }
