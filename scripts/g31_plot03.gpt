@@ -1,0 +1,20 @@
+set auto x
+set offset 0,0,.5,.5
+set autoscale fix
+set term png
+set output "./plots/g31_plot03.png"
+
+#plot "./data/average.dat" u ($3 == min_y ? $3 : 1/0):1
+#min_pos_x = GPVAL_DATA_Y_MIN
+#plot "./data/average.dat" u ($3 == max_y ? $3 : 1/0):1
+#max_pos_x = GPVAL_DATA_Y_MAX
+
+set term png
+set output "./plots/g31_plot03.png"
+
+plot "./data/average.dat" using 1:2 title columnheader with lines,"./data/average.dat" using 1:2:4 with errorbars title ""
+
+
+
+
+

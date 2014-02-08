@@ -1,0 +1,14 @@
+set xlabel "Iteration Number"
+set ylabel "Time"
+set auto x
+set offset 0,0,.5,.5
+set autoscale fix
+#set datafile separator ","
+f(x)=a*x+b
+fit f(x) "./data/average.dat" u 1:2 via a,b
+
+
+set term png
+set output "./plots/g31_plot05.png"
+
+plot f(x), "./data/average.dat" using 1:2 title columnheader ,"./data/average.dat" using 1:2 title ""
