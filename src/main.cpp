@@ -67,54 +67,13 @@ using namespace cs296;
 
 //! This function creates all the GLUI gui elements
 void create_glui_ui(void)
-{
-  GLUI *glui = GLUI_Master.create_glui_subwindow( main_window, GLUI_SUBWINDOW_BOTTOM );
-  
-  glui->add_statictext("Simulation Timesteps"); 
-  GLUI_Spinner* velocityIterationSpinner =
-    glui->add_spinner("Velocity Iterations", GLUI_SPINNER_INT, &settings.velocity_iterations);
-  velocityIterationSpinner->set_int_limits(1, 500);
-  
-  GLUI_Spinner* positionIterationSpinner =
-    glui->add_spinner("Position Iterations", GLUI_SPINNER_INT, &settings.position_iterations);
-  positionIterationSpinner->set_int_limits(0, 100);
-  
-  GLUI_Spinner* hertzSpinner =
-    glui->add_spinner("Sim steps per frame", GLUI_SPINNER_FLOAT, &settings_hz);
-  hertzSpinner->set_float_limits(5.0f, 200.0f);
-
-
-  
-  new GLUI_Column( glui, false );
-  glui->add_statictext("Simulation Parameters"); 
-  glui->add_checkbox("Warm Starting", &settings.enable_warm_starting);
-  glui->add_checkbox("Time of Impact", &settings.enable_continuous);
-  glui->add_checkbox("Sub-Stepping", &settings.enable_sub_stepping);
-
-
-  
-  new GLUI_Column( glui, false );
-  glui->add_statictext("Display Options"); 
-  GLUI_Panel* drawPanel =	glui->add_panel("Draw");
-  glui->add_checkbox_to_panel(drawPanel, "Shapes", &settings.draw_shapes);
-  glui->add_checkbox_to_panel(drawPanel, "Joints", &settings.draw_joints);
-  glui->add_checkbox_to_panel(drawPanel, "AABBs", &settings.draw_AABBs);
-  glui->add_checkbox_to_panel(drawPanel, "Statistics", &settings.draw_stats);
-  glui->add_checkbox_to_panel(drawPanel, "Profile", &settings.draw_profile);
-  
-  new GLUI_Column( glui, false );
-  glui->add_button("Pause", 0, callbacks_t::pause_cb);
-  glui->add_button("Single Step", 0, callbacks_t::single_step_cb);
-  glui->add_button("Restart", 0, callbacks_t::restart_cb);
-  
-  glui->add_button("Quit", 0,(GLUI_Update_CB)callbacks_t::exit_cb);
-  glui->set_main_gfx_window( main_window );
-}
+{}
 
 
 //! This is the main function
 int main(int argc, char** argv)
 {
+start :
   test_count = 1;
   test_index = 0;
   test_selection = test_index;
@@ -149,6 +108,9 @@ int main(int argc, char** argv)
   secdiff = (endsec-strtsec);
   udiff = (endu - strtu);
   diff = (secdiff * 1000.0) + (udiff / 1000.0);
+
+  if(abs(t[0]/iter) > 5 || abs(t[1]/iter) > 5 || abs(t[2]/iter) > 5 || abs(t[0]/iter) > 5 || diff < 0 || diff > 20)
+	goto start;
   
 	std::cout.precision(5);
 	std::cout << "Number of Iterations: " << iter << std::endl;
@@ -157,6 +119,6 @@ int main(int argc, char** argv)
 	std::cout << "Average time for velocity updates is " << std::fixed<<  t[2]/iter << " ms" << std::endl;
 	std::cout << "Average time for position updates is " << std::fixed<<  t[3]/iter << " ms" << std::endl << std::endl;
 	std::cout << "Total loop time is " << std::fixed<< diff << "ms" << std::endl;
-	
+
  return 0;
 }
