@@ -1,14 +1,19 @@
+set title "step time v/s iteration number in 'random' as well as '02' data"
 set xlabel "Iteration Number"
-set ylabel "Time"
+set ylabel "Time in ms"
 set auto x
 set offset 0,0,.5,.5
 set autoscale fix
 #set datafile separator ","
+
 f(x)=a*x+b
-fit f(x) "./data/average.dat" u 1:2 via a,b
+fit f(x) "./data/average03.dat" u 1:2 via a,b
+
+g(x)=c*x+d
+fit g(x) "./data/average02.dat" u 1:2 via c,d
 
 
 set term png
 set output "./plots/g31_plot05.png"
 
-plot f(x), "./data/average.dat" using 1:2 title columnheader ,"./data/average.dat" using 1:2 title ""
+plot f(x) title "best fit step time(g31_lab05data_random.csv)",g(x) title "best fit step time(g31_lab05data_02.csv)","./data/average03.dat" using 1:2 title "step time(g31_lab05data_random.csv)","./data/average02.dat" using 1:2 title "step time(g31_lab05data_02.csv)
