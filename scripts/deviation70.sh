@@ -1,9 +1,8 @@
 #!/bin/bash
 
 iter_no=1
-((rerun_no = 1))
-((no_reruns = 10)) # max_rand_elements
-((iter_no = 20)) # use 70 in the final
+((no_reruns = 15)) # max_rand_elements
+((iter_no = 70)) # use 70 in the final
 
 output_file=./data/average70.dat
 input_file=./data/g31_lab05data_02.csv

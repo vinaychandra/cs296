@@ -2,9 +2,9 @@
 input=./data/g31_lab05data_02.csv
 output=./data/g31_lab05data_random.csv
 
-max_rand_elements=4
-number_of_reruns=10
-number_of_iters=50
+max_rand_elements=15
+number_of_reruns=150
+number_of_iters=1500
 current_iter=1
 
 rm -f $output

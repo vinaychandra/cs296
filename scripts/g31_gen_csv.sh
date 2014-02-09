@@ -1,8 +1,8 @@
 #!/bin/bash
 ((iter_no = 1))
 ((rerun_no = 1))
-((no_reruns = 10))
-((total_iter = 50))
+((no_reruns = 150))
+((total_iter = 1500))
 
 output_file=./data/g31_lab05data_01.csv
 
