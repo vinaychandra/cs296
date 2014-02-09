@@ -5,8 +5,8 @@ iter_no=1
 ((no_reruns = 10))
 ((total_iter = 50))
 
-output_file=./data/average.dat
-input_file=./data/g31_lab05data_01.csv
+output_file=./data/average02.dat
+input_file=./data/g31_lab05data_02.csv
 
 rm -f $output_file
 touch $output_file
