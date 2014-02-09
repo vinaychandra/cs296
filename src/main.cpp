@@ -109,7 +109,7 @@ start :
   udiff = (endu - strtu);
   diff = (secdiff * 1000.0) + (udiff / 1000.0);
 
-  if(abs(t[0]/iter) > 20 || abs(t[1]/iter) > 20 || abs(t[2]/iter) > 20 || abs(t[0]/iter) > 20 || diff < 0 || diff > 1500000)
+  if(abs(t[0]/iter) > 20 || abs(t[1]/iter) > 20 || abs(t[2]/iter) > 20 || abs(t[3]/iter) > 20 || diff < 0 || diff > 1500000)
 	goto start;
   
 	std::cout.precision(5);
