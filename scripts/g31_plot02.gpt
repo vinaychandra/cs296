@@ -15,6 +15,6 @@ set output "./plots/g31_plot02.png"
 set term png
 set output "./plots/g31_plot02.png"
 
-plot "./data/average01.dat" using 1:($3+$4+$5) title "update sum" with lines,"./data/average01.dat" using 1:3 title "collision time" with lines,"./data/average01.dat" using 1:4 title "velocity updates" with lines,"./data/average01.dat" using 1:5 title "position updates" with lines
+plot "./data/average01.dat" using 1:($3+$4+$5) title "update sum" with lines,"./data/average01.dat" using 1:2 title "step time" with lines,"./data/average01.dat" using 1:3 title "collision time" with lines,"./data/average01.dat" using 1:4 title "velocity updates" with lines,"./data/average01.dat" using 1:5 title "position updates" with lines
 
 
