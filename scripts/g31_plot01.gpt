@@ -1,0 +1,30 @@
+set title "step time and average looptime v/s iteration number"
+set boxwidth 0.3
+set style fill solid
+set xlabel "Iteration Number"
+set ylabel "Time in ms"
+set auto x
+set offset 0,0,.5,.5
+set autoscale fix
+#set datafile separator ","
+
+plot "./data/average01.dat" using 1:6 title columnheader with lines
+max_y = GPVAL_DATA_Y_MAX
+min_y = GPVAL_DATA_Y_MIN
+
+plot "./data/average01.dat" u ($6 == min_y ? $6 : 1/0):1
+min_pos_x = GPVAL_DATA_Y_MIN
+plot "./data/average01.dat" u ($6 == max_y ? $6 : 1/0):1
+max_pos_x = GPVAL_DATA_Y_MAX
+
+
+set term png
+set output "./plots/g31_plot01.png"
+
+set arrow 1 from min_pos_x, min_y+0.3 to min_pos_x, min_y+0.02 lw 2.0
+set arrow 2 from max_pos_x, max_y+0.3 to max_pos_x, max_y+0.02 lw 2.0
+set label 1 at min_pos_x, min_y+0.3 "min" center  
+set label 2 at max_pos_x, max_y+0.3 "max" center 
+
+plot "./data/average01.dat" using 1:2 title "average steptime" with boxes,"./data/average01.dat" using 1:6 title "average loop time" with lines
+

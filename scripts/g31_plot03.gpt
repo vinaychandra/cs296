@@ -1,0 +1,18 @@
+set title "step time v/s iteration number along with error bars"
+set auto x
+set offset 0,0,.5,.5
+set autoscale fix
+set xlabel "Iteration Number"
+set ylabel "Time in ms"
+set term png
+set output "./plots/g31_plot03.png"
+
+set term png
+set output "./plots/g31_plot03.png"
+
+plot "./data/average01.dat" using 1:2 title "step time" with lines,"./data/average01.dat" using 1:2:7 with errorbars title "errors"
+
+
+
+
+

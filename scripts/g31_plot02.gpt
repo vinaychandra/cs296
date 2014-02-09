@@ -1,0 +1,20 @@
+set title "collision,velocity and position update times v/s iteration number"
+set auto x
+set offset 0,0,.5,.5
+set autoscale fix
+set xlabel "Iteration Number"
+set ylabel "Time in ms"
+set term png
+set output "./plots/g31_plot02.png"
+
+#plot "./data/average01.dat" u ($3 == min_y ? $3 : 1/0):1
+#min_pos_x = GPVAL_DATA_Y_MIN
+#plot "./data/average01.dat" u ($3 == max_y ? $3 : 1/0):1
+#max_pos_x = GPVAL_DATA_Y_MAX
+
+set term png
+set output "./plots/g31_plot02.png"
+
+plot "./data/average01.dat" using 1:($3+$4+$5) title "update sum" with lines,"./data/average01.dat" using 1:2 title "step time" with lines,"./data/average01.dat" using 1:3 title "collision time" with lines,"./data/average01.dat" using 1:4 title "velocity updates" with lines,"./data/average01.dat" using 1:5 title "position updates" with lines
+
+

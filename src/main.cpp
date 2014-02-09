@@ -27,7 +27,7 @@
 #include "render.hpp"
 #include "cs296_base.hpp"
 #include "callbacks.hpp"
-
+#include "iostream"
 //! GLUI is the library used for drawing the GUI
 //! Learn more about GLUI by reading the GLUI documentation
 //! Learn to use preprocessor diectives to make your code portable
@@ -40,7 +40,8 @@
 //! These are standard include files
 //! These are usually available at standard system paths like /usr/include
 //! Read about the use of include files in C++
-#include <cstdio>
+#include <sys/time.h>
+
 
 
 //! Notice the use of extern. Why is it used here?
@@ -66,101 +67,58 @@ using namespace cs296;
 
 //! This function creates all the GLUI gui elements
 void create_glui_ui(void)
-{
-  GLUI *glui = GLUI_Master.create_glui_subwindow( main_window, GLUI_SUBWINDOW_BOTTOM );
-  
-  glui->add_statictext("Simulation Timesteps"); 
-  GLUI_Spinner* velocityIterationSpinner =
-    glui->add_spinner("Velocity Iterations", GLUI_SPINNER_INT, &settings.velocity_iterations);
-  velocityIterationSpinner->set_int_limits(1, 500);
-  
-  GLUI_Spinner* positionIterationSpinner =
-    glui->add_spinner("Position Iterations", GLUI_SPINNER_INT, &settings.position_iterations);
-  positionIterationSpinner->set_int_limits(0, 100);
-  
-  GLUI_Spinner* hertzSpinner =
-    glui->add_spinner("Sim steps per frame", GLUI_SPINNER_FLOAT, &settings_hz);
-  hertzSpinner->set_float_limits(5.0f, 200.0f);
-
-
-  
-  new GLUI_Column( glui, false );
-  glui->add_statictext("Simulation Parameters"); 
-  glui->add_checkbox("Warm Starting", &settings.enable_warm_starting);
-  glui->add_checkbox("Time of Impact", &settings.enable_continuous);
-  glui->add_checkbox("Sub-Stepping", &settings.enable_sub_stepping);
-
-
-  
-  new GLUI_Column( glui, false );
-  glui->add_statictext("Display Options"); 
-  GLUI_Panel* drawPanel =	glui->add_panel("Draw");
-  glui->add_checkbox_to_panel(drawPanel, "Shapes", &settings.draw_shapes);
-  glui->add_checkbox_to_panel(drawPanel, "Joints", &settings.draw_joints);
-  glui->add_checkbox_to_panel(drawPanel, "AABBs", &settings.draw_AABBs);
-  glui->add_checkbox_to_panel(drawPanel, "Statistics", &settings.draw_stats);
-  glui->add_checkbox_to_panel(drawPanel, "Profile", &settings.draw_profile);
-  
-  new GLUI_Column( glui, false );
-  glui->add_button("Pause", 0, callbacks_t::pause_cb);
-  glui->add_button("Single Step", 0, callbacks_t::single_step_cb);
-  glui->add_button("Restart", 0, callbacks_t::restart_cb);
-  
-  glui->add_button("Quit", 0,(GLUI_Update_CB)callbacks_t::exit_cb);
-  glui->set_main_gfx_window( main_window );
-}
+{}
 
 
 //! This is the main function
 int main(int argc, char** argv)
 {
+start :
   test_count = 1;
   test_index = 0;
   test_selection = test_index;
   
   entry = sim;
   test = entry->create_fcn();
-/*
-  //! This initializes GLUT
-  glutInit(&argc, argv);
-  glutInitDisplayMode(GLUT_RGBA | GLUT_DOUBLE);
-  glutInitWindowSize(width, height);
+  float32 t[4];
+  for(int i=0;i<4;i++){
+	  t[i]=0;
+  }
+  int iter=atoi(argv[1]);
+  struct timeval tv;
+  struct timezone tz;
+  float32 strtsec,endsec,strtu,endu;
+  
+  gettimeofday(&tv,&tz);
+  strtsec=(tv.tv_sec);
+  strtu=(tv.tv_usec);
+  
+  for(int i=0;i<iter;i++){
 
-  char title[50];
-  sprintf(title, "CS296 Base Code. Running on Box2D %d.%d.%d", b2_version.major, b2_version.minor, b2_version.revision);
-  main_window = glutCreateWindow(title);
+	(*test).step(&settings);
+	t[0]=t[0]+test->get_world()->GetProfile().step;
+	t[1]=t[1]+test->get_world()->GetProfile().collide;
+	t[2]=t[2]+test->get_world()->GetProfile().solveVelocity;
+	t[3]=t[3]+test->get_world()->GetProfile().solvePosition;
+  }
+  gettimeofday(&tv,&tz);
+  endsec=(tv.tv_sec);
+  endu=(tv.tv_usec);
+  float32 secdiff,udiff,diff;
+  secdiff = (endsec-strtsec);
+  udiff = (endu - strtu);
+  diff = (secdiff * 1000.0) + (udiff / 1000.0);
 
-  //! Here we setup all the callbacks we need
-  //! Some are set via GLUI
-  GLUI_Master.set_glutReshapeFunc(callbacks_t::resize_cb);  
-  GLUI_Master.set_glutKeyboardFunc(callbacks_t::keyboard_cb);
-  GLUI_Master.set_glutSpecialFunc(callbacks_t::keyboard_special_cb);
-  GLUI_Master.set_glutMouseFunc(callbacks_t::mouse_cb);
-  //! Others are set directly
-  glutDisplayFunc(callbacks_t::display_cb);
-  glutMotionFunc(callbacks_t::mouse_motion_cb);
-  glutKeyboardUpFunc(callbacks_t::keyboard_up_cb); 
-  glutTimerFunc(frame_period, callbacks_t::timer_cb, 0);
+  if(abs(t[0]/iter) > 20 || abs(t[1]/iter) > 20 || abs(t[2]/iter) > 20 || abs(t[3]/iter) > 20 || diff < 0 || diff > 1500000)
+	goto start;
+  
+	std::cout.precision(5);
+	std::cout << "Number of Iterations: " << iter << std::endl;
+	std::cout << "Average time per step is " << std::fixed <<  t[0]/iter << " ms" << std::endl;
+	std::cout << "Average time for collisions is " << std::fixed<<  t[1]/iter << " ms" << std::endl;
+	std::cout << "Average time for velocity updates is " << std::fixed<<  t[2]/iter << " ms" << std::endl;
+	std::cout << "Average time for position updates is " << std::fixed<<  t[3]/iter << " ms" << std::endl << std::endl;
+	std::cout << "Total loop time is " << std::fixed<< diff << "ms" << std::endl;
 
-  //! We create the GLUI user interface
-  create_glui_ui();
-
-  //! Enter the infinite GLUT event loop
-  glutMainLoop();
- */
- 
-// base_sim_t new_world;
-// b2Timer timer= b2Timer();
-	float32 s = 0.0f;
- 
- for (int i = 0; i < 150; i++)
- {
-	 b2Timer timer;
-	 test->get_world()->Step(1.0f/settings.hz, settings.velocity_iterations, settings.position_iterations);
-	 s += timer.GetMilliseconds();
- }
- 
-  printf("The average time for a 150 iterations is: %f ms\n",(float32)s/150.0);
-  //printf("This is from the Box2D simulation for CS296 Lab 04. It has been made by Saicharan from Group 31.\n");
-  return 0;
+ return 0;
 }

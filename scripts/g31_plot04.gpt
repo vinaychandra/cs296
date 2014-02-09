@@ -1,0 +1,27 @@
+set title "frequency of step time variations"
+set auto x
+set offset 0,0,.5,.5
+set autoscale fix
+set boxwidth 0.3
+set style fill solid
+set datafile separator ","
+set xlabel "time in ms"
+set ylabel "frequency"
+
+plot "./data/average70.dat" u 2:3
+min_error = GPVAL_DATA_Y_MIN
+plot "./data/average70.dat" u 2:3
+max_error = GPVAL_DATA_Y_MAX
+
+bw = (max_error-min_error)/10
+
+set boxwidth bw*0.7
+ 
+bin_number(x) = floor(x/bw)
+
+rounded(x) = bw * ( bin_number(x) + 0.5 )
+
+set term png
+set output "./plots/g31_plot04.png"
+
+plot "./data/average70.dat" using (rounded($3)):(1) smooth frequency title "frequency" with  boxes,"./data/average70.dat" using (rounded($3)):(1) title "cumulative frequency" smooth cumulative
