@@ -1,3 +1,3 @@
 #!/bin/bash
 cd ../
-rsync -t ./src/* $1/backup/
+rsync -t ./src/* $1

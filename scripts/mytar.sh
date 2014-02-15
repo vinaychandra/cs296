@@ -1,7 +1,7 @@
 #!/bin/bash
 if (( $1 == '1' ))
 then
-	tar czf ./src
+	tar czf src.tar.gz  src
 fi
 
 if (( $1 == '2' ))
@@ -11,5 +11,5 @@ then
 	do
 		gzip -c $file > $file".gz"
 	done
-	tar cvf src.tar *.gz
+	tar cvf ../src.tar *.gz
 fi
